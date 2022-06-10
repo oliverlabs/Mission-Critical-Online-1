@@ -69,6 +69,9 @@ Create the name of the service account to use
 {{- if .Values.route53.enabled }}
 {{- print "aws" -}}
 {{- end -}}
+{{- if .Values.azuredns.enabled }}
+{{- print "azure-dns" -}}
+{{- end -}}
 {{- if .Values.rfc2136.enabled }}
 {{- print "rfc2136" -}}
 {{- end -}}
