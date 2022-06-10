@@ -218,13 +218,13 @@ jobs:
           az role assignment create --assignee-object-id $kubeletIdentityObjectId `
               --role "DNS Zone Contributor" `
               --scope $DNS_ID `
-              --assignee-principal-type ServicePrincipal`
+              --assignee-principal-type ServicePrincipal
 
           # Create Reader role assignment
           az role assignment create --assignee-object-id $kubeletIdentityObjectId `
               --role "Reader" `
               --scope $DNS_RG_ID `
-              --assignee-principal-type ServicePrincipal`
+              --assignee-principal-type ServicePrincipal
 
           # Deploy ingress-nginx (helm) configuration
           echo "*** Installing k8gb on $aksClusterName in $aksClusterResourceGroup"
