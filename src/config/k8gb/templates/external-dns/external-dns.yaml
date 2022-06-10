@@ -48,11 +48,11 @@ spec:
             mountPath: /etc/kubernetes/azure.json
             readOnly: true
           {{- end }}
-        volumes:
-          {{- if .Values.azuredns.enabled }}
-          # Azure DNS volume(s)
-          - name: azure-config-file
-            secret:
-              secretName: external-dns-secret-azure
-          {{- end }}
+      volumes:
+        {{- if .Values.azuredns.enabled }}
+        # Azure DNS volume(s)
+        - name: azure-config-file
+          secret:
+            secretName: external-dns-secret-azure
+        {{- end }}
 {{- end }}
