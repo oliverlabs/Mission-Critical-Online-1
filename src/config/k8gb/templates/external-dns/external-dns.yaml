@@ -45,7 +45,7 @@ spec:
           {{- if .Values.azuredns.enabled }}
           # Azure mountPath(s)
           - name: azure-config-file
-            mountPath: /etc/kubernetes/azure.json
+            mountPath: /etc/kubernetes/
             readOnly: true
           {{- end }}
       volumes:

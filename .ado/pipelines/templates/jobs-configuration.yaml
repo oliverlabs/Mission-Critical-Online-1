@@ -203,6 +203,9 @@ jobs:
           $kubeletIdentityClientId = $(az aks show --resource-group $aksClusterResourceGroup --name $aksClusterName `
                                           --query "identityProfile.kubeletidentity.clientId" --output tsv)
 
+          $kubeletIdentityObjectId = $(az aks show --resource-group $aksClusterResourceGroup --name $aksClusterName `
+                                          --query "identityProfile.kubeletidentity.objectId" --output tsv)
+
           # Gather Ingress Load Balancer IP from pipeline artifact json
           $aksIngressIp = $stamp.aks_cluster_ingress_ip_address
 
@@ -212,14 +215,16 @@ jobs:
           $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$($dnsZone)"
 
           # Create DNS Zone Contributor role assignment
-          az role assignment create --assignee $kubeletIdentityClientId `
+          az role assignment create --assignee-object-id $kubeletIdentityObjectId `
               --role "DNS Zone Contributor" `
-              --scope $DNS_ID
+              --scope $DNS_ID `
+              --assignee-principal-type ServicePrincipal`
 
           # Create Reader role assignment
-          az role assignment create --assignee $kubeletIdentityClientId `
+          az role assignment create --assignee-object-id $kubeletIdentityObjectId `
               --role "Reader" `
-              --scope $DNS_RG_ID
+              --scope $DNS_RG_ID `
+              --assignee-principal-type ServicePrincipal`
 
           # Deploy ingress-nginx (helm) configuration
           echo "*** Installing k8gb on $aksClusterName in $aksClusterResourceGroup"
