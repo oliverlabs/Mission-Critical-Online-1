@@ -170,7 +170,7 @@ jobs:
 
 
   - task: AzureCLI@2
-    displayName: 'Install k8gb-io on AKS clusters'
+    displayName: 'Install k8gb-io $(k8gbVersion) on AKS clusters'
     retryCountOnTaskFailure: 1
     inputs:
       azureSubscription: $(azureServiceConnection)
@@ -236,7 +236,7 @@ jobs:
           helm upgrade --install k8gb src/config/k8gb `
                 --namespace $k8gbNamespace `
                 --create-namespace `
-                --set k8gb.imageTag="v0.9.0" `
+                --set k8gb.imageTag="$(k8gbVersion)" `
                 --set k8gb.dnsZone="$dnsZone" `
                 --set k8gb.edgeDNSZone="$(envDomainName)" `
                 --set k8gb.edgeDNSServers="{168.63.129.16}" `
