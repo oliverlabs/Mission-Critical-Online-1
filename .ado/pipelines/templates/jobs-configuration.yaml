@@ -203,10 +203,6 @@ jobs:
           # Gather Ingress Load Balancer IP from pipeline artifact json
           $aksIngressIp = $stamp.aks_cluster_ingress_ip_address
 
-          # We are using the Region of the EH namespace as a workaround since this has the right format for the Cosmos SDK ("East US 2" instead of "eastus2")
-          $region = $(az eventhubs namespace list --resource-group $aksClusterResourceGroup --query "[0].location" --output tsv)
-          echo "*** Use Azure Region $region from Event Hub namespace"
-
           $kubeletIdentityClientId = $(az aks show --resource-group $aksClusterResourceGroup --name $aksClusterName `
                                           --query "identityProfile.kubeletidentity.clientId" --output tsv)
 
@@ -239,7 +235,7 @@ jobs:
                 --set k8gb.dnsZone="$dnsZone" ` # dnsZone controlled by gslb
                 --set k8gb.edgeDNSZone="$(envDomainName)" ` # main zone which would contain gslb zone to delegate
                 --set k8gb.edgeDNSServer="168.63.129.16" ` # Azure DNS server
-                --set k8gb.clusterGeoTag="$region" ` # used for places where we need to distinguish between differnet Gslb instances
+                --set k8gb.clusterGeoTag="$($stamp.location)" ` # used for places where we need to distinguish between differnet Gslb instances
                 --set k8gb.extGslbClustersGeoTags="" ` # comma-separated list of external gslb geo tags to pair with
                 --set azuredns.enabled="true" `
                 --set azuredns.tenantId="$tenantId" `
