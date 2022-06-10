@@ -228,6 +228,9 @@ jobs:
 
           $k8gbNamespace = "k8gb"
 
+          helm repo add coredns https://absaoss.github.io/coredns-helm
+          helm repo update
+
           helm dependency build src/config/k8gb
 
           helm upgrade --install k8gb src/config/k8gb `
