@@ -170,7 +170,7 @@ jobs:
 
 
   - task: AzureCLI@2
-    displayName: 'Install k8gb-io $(k8gbVersion) on AKS clusters'
+    displayName: 'Install k8gb-io on AKS clusters'
     retryCountOnTaskFailure: 1
     inputs:
       azureSubscription: $(azureServiceConnection)
@@ -226,17 +226,19 @@ jobs:
           $k8gbNamespace = "k8gb"
 
           helm upgrade --install k8gb src/config/k8gb `
-                --namespace $k8gbNamespace --create-namespace `
-                --set k8gb.dnsZone="$dnsZone" ` # dnsZone controlled by gslb
-                --set k8gb.edgeDNSZone="$(envDomainName)" ` # main zone which would contain gslb zone to delegate
-                --set k8gb.edgeDNSServer="168.63.129.16" ` # Azure DNS server
-                --set k8gb.clusterGeoTag="$($stamp.location)" ` # used for places where we need to distinguish between differnet Gslb instances
-                --set k8gb.extGslbClustersGeoTags="" ` # comma-separated list of external gslb geo tags to pair with
+                --namespace $k8gbNamespace `
+                --create-namespace `
+                --set k8gb.dnsZone="$dnsZone" `
+                --set k8gb.edgeDNSZone="$(envDomainName)" `
+                --set k8gb.edgeDNSServer="168.63.129.16" `
+                --set k8gb.clusterGeoTag="$($stamp.location)" `
+                --set k8gb.extGslbClustersGeoTags="" `
                 --set azuredns.enabled="true" `
                 --set azuredns.tenantId="$tenantId" `
                 --set azuredns.subscriptionId="$subscriptionId" `
                 --set azuredns.userAssignedIdentityID="$kubeletIdentityClientId" `
                 --set azuredns.resourceGroup="$(envDnsZoneRG)" `
+                --set coredns.serviceType="LoadBalancer" `
                 --wait
                 # --version "$(k8gbVersion)" `
         }
