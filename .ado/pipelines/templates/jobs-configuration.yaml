@@ -227,8 +227,6 @@ jobs:
 
           helm upgrade --install k8gb src/config/k8gb `
                 --namespace $k8gbNamespace --create-namespace `
-                --values src/config/k8gb/values.helm.yaml `
-                # --version "$(k8gbVersion)" `
                 --set k8gb.dnsZone="$dnsZone" ` # dnsZone controlled by gslb
                 --set k8gb.edgeDNSZone="$(envDomainName)" ` # main zone which would contain gslb zone to delegate
                 --set k8gb.edgeDNSServer="168.63.129.16" ` # Azure DNS server
@@ -238,7 +236,9 @@ jobs:
                 --set azuredns.tenantId="$tenantId" `
                 --set azuredns.subscriptionId="$subscriptionId" `
                 --set azuredns.userAssignedIdentityID="$kubeletIdentityClientId" `
-                --set azuredns.resourceGroup="$(envDnsZoneRG)"
+                --set azuredns.resourceGroup="$(envDnsZoneRG)" `
+                --wait
+                # --version "$(k8gbVersion)" `
         }
 
   - ${{ if eq(parameters.runChaosTesting, 'true') }}: # If chaos experiments are executed, we need to prepare one stamps AKS cluster by installing Chaos Mesh
