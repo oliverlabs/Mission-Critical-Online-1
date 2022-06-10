@@ -56,6 +56,20 @@ resource "azurerm_network_security_rule" "allow_inbound_https" {
   network_security_group_name = azurerm_network_security_group.default.name
 }
 
+resource "azurerm_network_security_rule" "allow_inbound_dns" {
+  name                        = "Allow_Inbound_DNS"
+  priority                    = 200
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Udp"
+  source_port_range           = "*"
+  destination_port_ranges     = ["53"]
+  source_address_prefix       = "*"
+  destination_address_prefix  = azurerm_public_ip.aks_ingress.ip_address
+  resource_group_name         = azurerm_resource_group.stamp.name
+  network_security_group_name = azurerm_network_security_group.default.name
+}
+
 # Subnet for Kubernetes nodes and pods
 resource "azurerm_subnet" "kubernetes" {
   name                 = "kubernetes-snet"
