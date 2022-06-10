@@ -125,8 +125,8 @@ k8gb-{{ .Values.k8gb.dnsZone }}-{{ .Values.k8gb.clusterGeoTag }}
 {{- end -}}
 {{- end -}}
 
-{{- if .Values.azuredns.enabled -}}
 {{- define "external-dns.azure-credentials" -}}
+{{- if .Values.azuredns.enabled -}}
 {
   "tenantId": "{{ .Values.azuredns.tenantId }}",
   "subscriptionId": "{{ .Values.azuredns.subscriptionId }}",
@@ -134,5 +134,5 @@ k8gb-{{ .Values.k8gb.dnsZone }}-{{ .Values.k8gb.clusterGeoTag }}
   "useManagedIdentityExtension": true,
   "userAssignedIdentityID": "{{ .Values.azuredns.userAssignedIdentityID }}"
 }
-{{ end }}
+{{- end -}}
 {{- end -}}
