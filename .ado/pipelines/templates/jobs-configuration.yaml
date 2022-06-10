@@ -203,6 +203,9 @@ jobs:
           $kubeletIdentityClientId = $(az aks show --resource-group $aksClusterResourceGroup --name $aksClusterName `
                                           --query "identityProfile.kubeletidentity.clientId" --output tsv)
 
+          # Gather Ingress Load Balancer IP from pipeline artifact json
+          $aksIngressIp = $stamp.aks_cluster_ingress_ip_address
+
           $dnsZone = "edge.$(envDomainName)"
 
           $DNS_RG_ID = "/subscriptions/$($subscriptionId)/resourceGroups/$(envDnsZoneRG)"
@@ -225,6 +228,8 @@ jobs:
 
           $k8gbNamespace = "k8gb"
 
+          helm dependency build src/config/k8gb
+
           helm upgrade --install k8gb src/config/k8gb `
                 --namespace $k8gbNamespace `
                 --create-namespace `
@@ -239,6 +244,8 @@ jobs:
                 --set azuredns.userAssignedIdentityID="$kubeletIdentityClientId" `
                 --set azuredns.resourceGroup="$(envDnsZoneRG)" `
                 --set coredns.serviceType="LoadBalancer" `
+                --set coredns.service.loadBalancerIP="$aksIngressIp" `
+                --set coredns.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-resource-group"="$aksClusterResourceGroup" `
                 --wait
                 # --version "$(k8gbVersion)" `
         }
