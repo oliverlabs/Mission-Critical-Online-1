@@ -212,7 +212,7 @@ jobs:
           $dnsZone = "edge.$(envDomainName)"
 
           $DNS_RG_ID = "/subscriptions/$($subscriptionId)/resourceGroups/$(envDnsZoneRG)"
-          $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$($dnsZone)"
+          $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$(envDomainName)"
 
           # Create DNS Zone Contributor role assignment
           az role assignment create --assignee-object-id $kubeletIdentityObjectId `
