@@ -210,7 +210,7 @@ jobs:
           $aksIngressIp = $stamp.aks_cluster_ingress_ip_address
 
           $edgeDnsZone = "k8gb.$(envDomainName)"
-          $dnsZone = "managed.$edgeDnsZone"
+          $dnsZone = "t1.$edgeDnsZone"
 
           $DNS_RG_ID = "/subscriptions/$($subscriptionId)/resourceGroups/$(envDnsZoneRG)"
           $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$edgeDnsZone"
