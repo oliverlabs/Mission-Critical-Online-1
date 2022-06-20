@@ -43,6 +43,11 @@ jobs: # using jobs so they each run in parallel
             echo "*** Retrieved container image name from artifact - $fullContainerImageName"
 
             $fqdn = $stamp.aks_cluster_ingress_fqdn
+
+            $rootDnsZone = "k8gb.$(envDomainName)"
+            $edgeDnsZone = "edge.$rootDnsZone"
+            $fqdn = "$($stamp.aks_cluster_name).$edgeDnsZone"
+
             echo "*** Retrieved Ingress Controller FQDN $fqdn for AKS cluster $aksClusterName"
 
             # Apply workload worker helm chart
@@ -129,6 +134,11 @@ jobs: # using jobs so they each run in parallel
             az aks get-credentials --name $aksClusterName --resource-group $aksClusterResourceGroup --overwrite-existing
 
             $fqdn = $stamp.aks_cluster_ingress_fqdn
+
+            $rootDnsZone = "k8gb.$(envDomainName)"
+            $edgeDnsZone = "edge.$rootDnsZone"
+            $fqdn = "$($stamp.aks_cluster_name).$edgeDnsZone"
+
             echo "*** Retrieved Ingress Controller FQDN $fqdn for AKS cluster $aksClusterName"
 
             $fullContainerImageName = Get-Content -Path "$(Pipeline.Workspace)/catalogservice-containerImageName/catalogservice.txt"
