@@ -215,6 +215,9 @@ jobs:
           $DNS_RG_ID = "/subscriptions/$($subscriptionId)/resourceGroups/$(envDnsZoneRG)"
           $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$edgeDnsZone"
 
+          $clusterGeoTag = $stamp.location
+          $extensionClusterGeoTag = '$(stampLocationsGrafana)' | ConvertFrom-Json | Where-Object { $_ -ne $clusterGeoTag }
+
           # Create DNS Zone Contributor role assignment
           az role assignment create --assignee-object-id $kubeletIdentityObjectId `
               --role "DNS Zone Contributor" `
@@ -246,8 +249,8 @@ jobs:
                 --set k8gb.dnsZone="$dnsZone" `
                 --set k8gb.edgeDNSZone="$edgeDnsZone" `
                 --set k8gb.edgeDNSServers="{168.63.129.16}" `
-                --set k8gb.clusterGeoTag="$($stamp.location)" `
-                --set k8gb.extGslbClustersGeoTags="swedencentral" `
+                --set k8gb.clusterGeoTag="$clusterGeoTag" `
+                --set k8gb.extGslbClustersGeoTags="$extensionClusterGeoTag" `
                 --set azuredns.enabled="true" `
                 --set azuredns.tenantId="$tenantId" `
                 --set azuredns.subscriptionId="$subscriptionId" `
