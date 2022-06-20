@@ -37,4 +37,4 @@ spec:
                 number: {{ .Values.workload.service.port | default 80 }}
   strategy:
     type: failover # Global load balancing strategy
-    primaryGeoTag: eu # Primary cluster geo tag
+    primaryGeoTag: uksouth # Primary cluster geo tag
