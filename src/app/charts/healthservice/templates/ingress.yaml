@@ -36,5 +36,5 @@ spec:
               port:
                 number: {{ .Values.workload.service.port | default 80 }}
   strategy:
-    type: failover # Global load balancing strategy
-    primaryGeoTag: uksouth # Primary cluster geo tag
+    type: roundRobin # Global load balancing strategy
+    dnsTtlSeconds: 5
