@@ -1,5 +1,5 @@
-apiVersion: k8gb.absa.oss/v1beta1
-kind: Gslb
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: {{ .Chart.Name }}-ingress
   labels:
@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
   annotations:
+    k8gb.io/strategy: roundRobin
+    k8gb.io/dns-ttl-seconds: "5"
     # To restric traffic coming only through our Front Door instance, we use a header check on the X-Azure-FDID
     # The value gets injected by the pipeline. Hence, this ID should be treated as a senstive value
     # nginx.ingress.kubernetes.io/modsecurity-snippet: |
@@ -18,23 +20,19 @@ metadata:
   {{ toYaml .Values.ingress.annotations | nindent 4 }}
   {{- end }}
 spec:
-  ingress:
-    ingressClassName: nginx
-    tls:
-    - hosts:
-      - {{ .Values.workload.domainname | quote }}
-      secretName: {{ .Values.workload.tlsSecret  }} # shouldn't be changed as this might be used by other services
-    rules:
-    - host: {{ .Values.workload.domainname | quote }}
-      http:
-        paths:
-        - path: /healthservice/ # The path prefix MUST NOT overlap with any other ingress definition of another exposed service
-          pathType: Prefix
-          backend:
-            service:
-              name: {{ .Chart.Name }}-service
-              port:
-                number: {{ .Values.workload.service.port | default 80 }}
-  strategy:
-    type: roundRobin # Global load balancing strategy
-    dnsTtlSeconds: 5
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - {{ .Values.workload.domainname | quote }}
+    secretName: {{ .Values.workload.tlsSecret }} # shouldn't be changed as this might be used by other services
+  rules:
+  - host: {{ .Values.workload.domainname | quote }}
+    http:
+      paths:
+      - path: /healthservice/ # The path prefix MUST NOT overlap with any other ingress definition of another exposed service
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Chart.Name }}-service
+            port:
+              number: {{ .Values.workload.service.port | default 80 }}
