@@ -209,10 +209,11 @@ jobs:
           # Gather Ingress Load Balancer IP from pipeline artifact json
           $aksIngressIp = $stamp.aks_cluster_ingress_ip_address
 
-          $dnsZone = "edge.$(envDomainName)"
+          $rootDnsZone = "k8gb.$(envDomainName)"
+          $edgeDnsZone = "edge.$rootDnsZone"
 
           $DNS_RG_ID = "/subscriptions/$($subscriptionId)/resourceGroups/$(envDnsZoneRG)"
-          $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$(envDomainName)"
+          $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$rootDnsZone"
 
           # Create DNS Zone Contributor role assignment
           az role assignment create --assignee-object-id $kubeletIdentityObjectId `
@@ -242,8 +243,8 @@ jobs:
                 --namespace $k8gbNamespace `
                 --create-namespace `
                 --set k8gb.imageTag="$(k8gbVersion)" `
-                --set k8gb.dnsZone="$dnsZone" `
-                --set k8gb.edgeDNSZone="$(envDomainName)" `
+                --set k8gb.dnsZone="$rootDnsZone" `
+                --set k8gb.edgeDNSZone="$edgeDnsZone" `
                 --set k8gb.edgeDNSServers="{168.63.129.16}" `
                 --set k8gb.clusterGeoTag="$($stamp.location)" `
                 --set k8gb.extGslbClustersGeoTags="swedencentral" `
