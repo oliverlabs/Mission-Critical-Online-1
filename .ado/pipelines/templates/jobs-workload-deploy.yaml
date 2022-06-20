@@ -46,7 +46,7 @@ jobs: # using jobs so they each run in parallel
 
             $edgeDnsZone = "k8gb.$(envDomainName)"
             $dnsZone = "t1.$edgeDnsZone"
-            $fqdn = "$($stamp.aks_cluster_name).$dnsZone"
+            $fqdn = "$(prefix)$(customSuffix).$dnsZone"
 
             echo "*** Retrieved Ingress Controller FQDN $fqdn for AKS cluster $aksClusterName"
 
@@ -137,7 +137,7 @@ jobs: # using jobs so they each run in parallel
 
             $edgeDnsZone = "k8gb.$(envDomainName)"
             $dnsZone = "t1.$edgeDnsZone"
-            $fqdn = "$($stamp.aks_cluster_name).$dnsZone"
+            $fqdn = "$(prefix)$(customSuffix).$dnsZone"
 
             echo "*** Retrieved Ingress Controller FQDN $fqdn for AKS cluster $aksClusterName"
 
