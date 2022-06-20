@@ -13,6 +13,11 @@ output "stamp_properties" {
   }]
 }
 
+# Output the prefix that was used for all the resources
+output "prefix" {
+  value = local.prefix
+}
+
 output "api_key" {
   value     = random_password.api_key.result
   sensitive = true

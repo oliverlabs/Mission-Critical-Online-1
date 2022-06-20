@@ -27,6 +27,8 @@ jobs: # using jobs so they each run in parallel
           # load json data from downloaded terraform artifact
           $releaseUnitInfraDeployOutput = Get-ChildItem $(Pipeline.Workspace)/terraformOutputReleaseUnitInfra/*.json | Get-Content | ConvertFrom-JSON
 
+          $prefix = $releaseUnitInfraDeployOutput.prefix.value
+
           # loop through stamps from pipeline artifact json
           foreach($stamp in $releaseUnitInfraDeployOutput.stamp_properties.value) {
 
@@ -46,7 +48,7 @@ jobs: # using jobs so they each run in parallel
 
             $edgeDnsZone = "k8gb.$(envDomainName)"
             $dnsZone = "t1.$edgeDnsZone"
-            $fqdn = "$(prefix)$(customSuffix).$dnsZone"
+            $fqdn = "$prefix.$dnsZone"
 
             echo "*** Retrieved Ingress Controller FQDN $fqdn for AKS cluster $aksClusterName"
 
@@ -119,6 +121,8 @@ jobs: # using jobs so they each run in parallel
           # load json data from downloaded terraform artifact
           $releaseUnitInfraDeployOutput = Get-ChildItem $(Pipeline.Workspace)/terraformOutputReleaseUnitInfra/*.json | Get-Content | ConvertFrom-JSON
 
+          $prefix = $releaseUnitInfraDeployOutput.prefix.value
+
           # loop through stamps from pipeline artifact json
           foreach($stamp in $releaseUnitInfraDeployOutput.stamp_properties.value) {
 
@@ -137,7 +141,7 @@ jobs: # using jobs so they each run in parallel
 
             $edgeDnsZone = "k8gb.$(envDomainName)"
             $dnsZone = "t1.$edgeDnsZone"
-            $fqdn = "$(prefix)$(customSuffix).$dnsZone"
+            $fqdn = "$prefix.$dnsZone"
 
             echo "*** Retrieved Ingress Controller FQDN $fqdn for AKS cluster $aksClusterName"
 
