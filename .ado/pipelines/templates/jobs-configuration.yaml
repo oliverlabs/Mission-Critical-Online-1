@@ -259,6 +259,7 @@ jobs:
                 --set coredns.serviceType="LoadBalancer" `
                 --set coredns.service.loadBalancerIP="$aksIngressIp" `
                 --set coredns.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-resource-group"="$aksClusterResourceGroup" `
+                --set externaldns.image="afe2e39b6globalcr.azurecr.io/k8s-artifacts-prod/external-dns/external-dns:v0.12.0-30-gc5fc57f9-dirty" `
                 --wait
                 # --version "$(k8gbVersion)" `
         }
