@@ -216,7 +216,9 @@ jobs:
           $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$edgeDnsZone"
 
           $clusterGeoTag = $stamp.location
-          $extensionClusterGeoTag = '$(stampLocations)' | ConvertFrom-Json | Where-Object { $_ -ne $clusterGeoTag }
+
+          # comma-separated list of external gslb geo tags to pair with
+          $extensionClusterGeoTag = ('$(stampLocations)' | ConvertFrom-Json | Where-Object { $_ -ne $clusterGeoTag }) -join ","
 
           # Create DNS Zone Contributor role assignment
           az role assignment create --assignee-object-id $kubeletIdentityObjectId `
