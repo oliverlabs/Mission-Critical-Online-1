@@ -50,8 +50,10 @@ jobs:
                 --namespace $ingressNamespace --create-namespace `
                 --values src/config/ingress-nginx/values.helm.yaml `
                 --set controller.service.loadBalancerIP="$aksIngressIp" `
-                --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-resource-group"="$aksClusterResourceGroup" `
+                --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" `
                 --version "$(ingressNginxVersion)"
+
+                #                --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-resource-group"="$aksClusterResourceGroup" `
         }
 
   - task: AzureCLI@2
@@ -260,12 +262,14 @@ jobs:
                 --set azuredns.userAssignedIdentityID="$kubeletIdentityClientId" `
                 --set azuredns.resourceGroup="$(envDnsZoneRG)" `
                 --set coredns.serviceType="LoadBalancer" `
-                --set coredns.service.loadBalancerIP="$aksIngressIp" `
-                --set coredns.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-resource-group"="$aksClusterResourceGroup" `
+                --set coredns.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" `
                 --set externaldns.image="afe2e39b6globalcr.azurecr.io/k8s-artifacts-prod/external-dns/external-dns:v0.12.0-30-gc5fc57f9-dirty" `
                 --wait
                 # --version "$(k8gbVersion)" `
                 # --set k8gb.imageTag="$(k8gbVersion)"
+                #                --set coredns.service.loadBalancerIP="$aksIngressIp" `
+                #--set coredns.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-resource-group"="$aksClusterResourceGroup" `
+
         }
 
   - ${{ if eq(parameters.runChaosTesting, 'true') }}: # If chaos experiments are executed, we need to prepare one stamps AKS cluster by installing Chaos Mesh
