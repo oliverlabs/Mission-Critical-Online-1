@@ -6,8 +6,7 @@ global:
 
 k8gb:
   # -- image repository
-  #imageRepo: "absaoss/k8gb"
-  imageRepo: "afe2e39b6globalcr.azurecr.io/k8gb"
+  imageRepo: "absaoss/k8gb"
   # -- ( string ) image tag defaults to Chart.AppVersion, see Chart.yaml, but can be overrided with imageTag key
   imageTag:
   # -- whether it should also deploy the gslb and dnsendpoints CRDs
