@@ -247,7 +247,7 @@ jobs:
           helm upgrade --install k8gb src/config/k8gb `
                 --namespace $k8gbNamespace `
                 --create-namespace `
-                --set k8gb.imageTag="$(k8gbVersion)" `
+                --set k8gb.imageTag="v0.9.0-a84f2fb-amd64" `
                 --set k8gb.dnsZone="$dnsZone" `
                 --set k8gb.edgeDNSZone="$edgeDnsZone" `
                 --set k8gb.edgeDNSServers="{168.63.129.16}" `
@@ -264,6 +264,7 @@ jobs:
                 --set externaldns.image="afe2e39b6globalcr.azurecr.io/k8s-artifacts-prod/external-dns/external-dns:v0.12.0-30-gc5fc57f9-dirty" `
                 --wait
                 # --version "$(k8gbVersion)" `
+                # --set k8gb.imageTag="$(k8gbVersion)"
         }
 
   - ${{ if eq(parameters.runChaosTesting, 'true') }}: # If chaos experiments are executed, we need to prepare one stamps AKS cluster by installing Chaos Mesh
