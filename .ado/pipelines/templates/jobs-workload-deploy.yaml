@@ -44,11 +44,11 @@ jobs: # using jobs so they each run in parallel
             $fullContainerImageName = Get-Content -Path "$(Pipeline.Workspace)/healthservice-containerImageName/healthservice.txt"
             echo "*** Retrieved container image name from artifact - $fullContainerImageName"
 
-            $fqdn = $stamp.aks_cluster_ingress_fqdn
+            #$fqdn = $stamp.aks_cluster_ingress_fqdn
 
             $edgeDnsZone = "k8gb.$(envDomainName)"
             $dnsZone = "t1.$edgeDnsZone"
-            $fqdn = "$prefix.$dnsZone"
+            $fqdn = "$($prefix)-healthservice.$dnsZone"
 
             echo "*** Retrieved Ingress Controller FQDN $fqdn for AKS cluster $aksClusterName"
 
@@ -137,11 +137,11 @@ jobs: # using jobs so they each run in parallel
             echo "*** Load credentials for AKS Cluster $aksClusterName in $aksClusterResourceGroup"
             az aks get-credentials --name $aksClusterName --resource-group $aksClusterResourceGroup --overwrite-existing
 
-            $fqdn = $stamp.aks_cluster_ingress_fqdn
+            #$fqdn = $stamp.aks_cluster_ingress_fqdn
 
             $edgeDnsZone = "k8gb.$(envDomainName)"
             $dnsZone = "t1.$edgeDnsZone"
-            $fqdn = "$prefix.$dnsZone"
+            $fqdn = "$($prefix)-catalogservice.$dnsZone"
 
             echo "*** Retrieved Ingress Controller FQDN $fqdn for AKS cluster $aksClusterName"
 
