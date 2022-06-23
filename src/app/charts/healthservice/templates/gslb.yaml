@@ -11,7 +11,7 @@ spec:
   ingress:
     ingressClassName: nginx
     rules:
-    - host: {{ .Values.workload.domainname | quote }}-gslb
+    - host: glsb-{{ .Values.workload.domainname }}
       http:
         paths:
         - path: /healthservice/ # The path prefix MUST NOT overlap with any other ingress definition of another exposed service
