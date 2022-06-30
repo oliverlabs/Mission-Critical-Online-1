@@ -221,6 +221,7 @@ jobs:
 
           # comma-separated list of external gslb geo tags to pair with
           $extensionClusterGeoTag = ('$(stampLocations)' | ConvertFrom-Json | Where-Object { $_ -ne $clusterGeoTag }) -join ","
+          echo "*** Fetched extensionClusterGeoTag: $extensionClusterGeoTag"
 
           # Create DNS Zone Contributor role assignment
           az role assignment create --assignee-object-id $kubeletIdentityObjectId `
@@ -255,7 +256,7 @@ jobs:
                 --set k8gb.edgeDNSZone="$edgeDnsZone" `
                 --set k8gb.edgeDNSServers="{168.63.129.16}" `
                 --set k8gb.clusterGeoTag="$clusterGeoTag" `
-                --set k8gb.extGslbClustersGeoTags="$extensionClusterGeoTag" `
+                --set-string k8gb.extGslbClustersGeoTags="$extensionClusterGeoTag" `
                 --set azuredns.enabled="true" `
                 --set azuredns.tenantId="$tenantId" `
                 --set azuredns.subscriptionId="$subscriptionId" `
