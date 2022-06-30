@@ -219,7 +219,7 @@ jobs:
 
           $clusterGeoTag = $stamp.location
 
-          # comma-separated list of external gslb geo tags to pair with
+          # comma-separated list of external gslb geo tags to pair with. Comma needs to be escaped for helm to not treat it special in the --set below
           $extensionClusterGeoTag = ('$(stampLocations)' | ConvertFrom-Json | Where-Object { $_ -ne $clusterGeoTag }) -join "\,"
           echo "*** Fetched extensionClusterGeoTag: $extensionClusterGeoTag"
 
