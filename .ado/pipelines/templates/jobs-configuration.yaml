@@ -211,8 +211,8 @@ jobs:
           # Gather Ingress Load Balancer IP from pipeline artifact json
           $aksIngressIp = $stamp.aks_cluster_ingress_ip_address
 
-          $edgeDnsZone = "k8gb.$(envDomainName)"
-          $dnsZone = "t1.$edgeDnsZone"
+          $edgeDnsZone = "$(k8gbEdgeDomainName)"
+          $dnsZone = "$(k8gbClusterDomainName)"
 
           $DNS_RG_ID = "/subscriptions/$($subscriptionId)/resourceGroups/$(envDnsZoneRG)"
           $DNS_ID = "$($DNS_RG_ID)/providers/Microsoft.Network/dnszones/$edgeDnsZone"

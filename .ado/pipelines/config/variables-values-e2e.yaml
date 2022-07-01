@@ -26,7 +26,13 @@ variables:
 - name: 'envDnsZoneRG'
   value: 'ao-dns-rg'                # <===== CHANGE THIS OR LEAVE THE VALUE BLANK
 - name: 'envDomainName'
-  value: 'e2e.shop.mission-critical.app'   # <===== CHANGE THIS OR LEAVE THE VALUE BLANK
+  value: ''                         # <===== CHANGE THIS OR LEAVE THE VALUE BLANK
+
+# k8gb settings
+- name: 'k8gbEdgeDomainName'
+  value: 'k8gb.mission-critical.app'
+- name: 'k8gbClusterDomainName'
+  value: 'aks.$(k8gbEdgeDomainName)'
 
 # Other settings
 - name:  'contactEmail'
