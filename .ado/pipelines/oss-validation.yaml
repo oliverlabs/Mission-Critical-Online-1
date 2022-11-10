@@ -21,6 +21,8 @@ stages:
       steps:
       - checkout: self # checkout github repository
 
+      - task: ComponentGovernanceComponentDetection@0
+
       - task: PowerShell@2
         displayName: 'Yarn install'
         inputs:
