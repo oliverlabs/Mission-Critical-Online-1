@@ -18,13 +18,13 @@ stages:
   jobs:
     - job: appBuild
       displayName: 'Build application'
-      workingDirectory: '$(workingDirectory)'
       steps:
       - checkout: self # checkout github repository
 
       - task: PowerShell@2
         displayName: 'Yarn install'
         inputs:
+          workingDirectory: '$(workingDirectory)'
           targetType: inline
           script: |
             yarn install
@@ -32,6 +32,7 @@ stages:
       - task: PowerShell@2
         displayName: 'Yarn install'
         inputs:
+          workingDirectory: '$(workingDirectory)'
           targetType: inline
           script: |
             yarn build
