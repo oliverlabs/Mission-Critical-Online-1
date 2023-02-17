@@ -1,6 +1,9 @@
 ﻿using AlwaysOn.Shared;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -16,16 +19,20 @@ namespace AlwaysOn.HealthService
     {
         private readonly TimeSpan _checkInterval;
 
+        private readonly ILogger<HealthJob> _logger;
         private readonly HealthCheckService _healthCheckService;
         private readonly SysConfiguration _sysConfig;
+        private readonly TelemetryClient _telemetryClient;
 
         public static HealthReport LastReport { get; private set; }
         public static DateTime LastExecution { get; private set; }
 
-        public HealthJob(SysConfiguration sysConfig, HealthCheckService healthCheckService)
+        public HealthJob(ILogger<HealthJob> logger, SysConfiguration sysConfig, HealthCheckService healthCheckService, TelemetryClient telemetryClient)
         {
+            _logger = logger;
             _sysConfig = sysConfig;
             _healthCheckService = healthCheckService;
+            _telemetryClient = telemetryClient;
             _checkInterval = TimeSpan.FromSeconds(_sysConfig.HealthServiceCacheDurationSeconds);
         }
 
@@ -33,32 +40,44 @@ namespace AlwaysOn.HealthService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(_sysConfig.HealthServiceOverallTimeoutSeconds));
-                try
+                var requestTelemetry = new RequestTelemetry { Name = $"HealthJob cycle" };
+
+                using (_telemetryClient.StartOperation(requestTelemetry))
                 {
-                    // Run all health checks
-                    LastReport = await _healthCheckService.CheckHealthAsync(cts.Token);
-                    LastExecution = DateTime.Now;
-                }
-                catch (TaskCanceledException)
-                {
-                    // Ignored
-                }
-                catch (Exception e)
-                {
-                    var exceptionEntry = new HealthReportEntry(HealthStatus.Unhealthy, "Exception on running health checks", TimeSpan.Zero, e, null);
-                    var entries = new Dictionary<string, HealthReportEntry>
+                    _logger.LogInformation("Running all health checks");
+                    var cts = new CancellationTokenSource(TimeSpan.FromSeconds(_sysConfig.HealthServiceOverallTimeoutSeconds));
+                    try
                     {
-                        { "HealthCheckerError", exceptionEntry }
-                    };
+                        // Run all health checks
+                        LastReport = await _healthCheckService.CheckHealthAsync(cts.Token);
+                        LastExecution = DateTime.Now;
+                        _logger.LogInformation("Finished all health checks. LastReport.Result={result}", LastReport.Status);
+                        requestTelemetry.Success = true;
+                    }
+                    catch (TaskCanceledException e)
+                    {
+                        // Ignored
+                        _logger.LogError(e, "TaskCanceledException during health check(s) execution");
+                        requestTelemetry.Success = false;
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e, "Exception during health check(s) execution {message}", e.Message);
+                        requestTelemetry.Success = false;
 
-                    LastReport = new HealthReport(entries, TimeSpan.Zero);
-                }
-                finally
-                {
-                    cts.Dispose();
-                }
+                        var exceptionEntry = new HealthReportEntry(HealthStatus.Unhealthy, "Exception on running health checks", TimeSpan.Zero, e, null);
+                        var entries = new Dictionary<string, HealthReportEntry>
+                        {
+                            { "HealthCheckerError", exceptionEntry }
+                        };
 
+                        LastReport = new HealthReport(entries, TimeSpan.Zero);
+                    }
+                    finally
+                    {
+                        cts.Dispose();
+                    }
+                }
                 await Task.Delay(_checkInterval, stoppingToken);
             }
         }
