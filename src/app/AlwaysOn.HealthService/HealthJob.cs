@@ -45,14 +45,14 @@ namespace AlwaysOn.HealthService
 
                 using (_telemetryClient.StartOperation(requestTelemetry))
                 {
-                    _logger.LogInformation("Running all health checks");
+                    _logger.LogDebug("Running all health checks");
                     var cts = new CancellationTokenSource(TimeSpan.FromSeconds(_sysConfig.HealthServiceOverallTimeoutSeconds));
                     try
                     {
                         // Run all health checks
                         LastReport = await _healthCheckService.CheckHealthAsync(cts.Token);
                         LastExecution = DateTime.Now;
-                        _logger.LogInformation("Finished all health checks. LastReport.Result={result}", LastReport.Status);
+                        _logger.LogDebug("Finished all health checks. LastReport.Result={result}", LastReport.Status);
                         requestTelemetry.Success = true;
                         requestTelemetry.ResponseCode = HttpStatusCode.OK.ToString();
                     }
