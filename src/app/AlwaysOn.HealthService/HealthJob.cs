@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -53,17 +54,20 @@ namespace AlwaysOn.HealthService
                         LastExecution = DateTime.Now;
                         _logger.LogInformation("Finished all health checks. LastReport.Result={result}", LastReport.Status);
                         requestTelemetry.Success = true;
+                        requestTelemetry.ResponseCode = HttpStatusCode.OK.ToString();
                     }
                     catch (TaskCanceledException e)
                     {
                         // Ignored
                         _logger.LogError(e, "TaskCanceledException during health check(s) execution");
                         requestTelemetry.Success = false;
+                        requestTelemetry.ResponseCode = HttpStatusCode.InternalServerError.ToString();
                     }
                     catch (Exception e)
                     {
                         _logger.LogError(e, "Exception during health check(s) execution {message}", e.Message);
                         requestTelemetry.Success = false;
+                        requestTelemetry.ResponseCode = HttpStatusCode.InternalServerError.ToString();
 
                         var exceptionEntry = new HealthReportEntry(HealthStatus.Unhealthy, "Exception on running health checks", TimeSpan.Zero, e, null);
                         var entries = new Dictionary<string, HealthReportEntry>
